@@ -1,0 +1,8 @@
+hack_dbg_tb.v
+../hack_dbg.v
+../rom4k.v
+../alu.v
+../cpu.v
+../ram16k.v
+../memory.v
+

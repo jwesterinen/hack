@@ -1,0 +1,6 @@
+hack_no_ram_tb.v
+../hack_no_ram.v
+../rom4k.v
+../alu.v
+../cpu.v
+

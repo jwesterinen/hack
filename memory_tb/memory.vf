@@ -1,0 +1,6 @@
+memory_tb.v
+../memory.v
+../ram16k.v
+../keyboard.v
+../display.v
+
