@@ -1,0 +1,45 @@
+####
+# TinyFPGA BX information: https://github.com/tinyfpga/TinyFPGA-BX/
+####
+
+# display
+set_io --warn-no-port A A2
+set_io --warn-no-port B A1
+set_io --warn-no-port C B1
+set_io --warn-no-port D C2
+set_io --warn-no-port E C1
+set_io --warn-no-port F D2
+set_io --warn-no-port G D1
+set_io --warn-no-port H E2
+set_io --warn-no-port I E1
+set_io --warn-no-port DP G2
+set_io --warn-no-port CC1 H1
+set_io --warn-no-port CC2 J1
+set_io --warn-no-port CC3 H2
+set_io --warn-no-port CC4 H9
+
+# keyboard
+set_io --warn-no-port COL1 D9
+set_io --warn-no-port COL2 D8
+set_io --warn-no-port COL3 C9
+set_io --warn-no-port COL4 A9
+set_io --warn-no-port ROW1 B8
+set_io --warn-no-port ROW2 A8
+set_io --warn-no-port ROW3 B7
+set_io --warn-no-port ROW4 A7
+
+# reset button
+set_io --warn-no-port RST B6
+
+# IO
+set_io --warn-no-port LED B3
+set_io --warn-no-port GPIO A6
+
+# USB
+set_io --warn-no-port USBP B4
+set_io --warn-no-port USBN A4
+set_io --warn-no-port USBPU A3
+
+# 16MHz clock
+set_io --warn-no-port CLK B2 # input
+

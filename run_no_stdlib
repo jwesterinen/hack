@@ -1,0 +1,14 @@
+for i
+do
+    cat "$i".asm >> $1_temp.asm
+done
+cd ../../nand2tetris/tools/
+./Assembler.sh ~/devel/TinyFPGA/hack/$1_temp.asm
+cd ../../TinyFPGA/hack
+mv $1_temp.hack $1.hack
+rm $1_temp.asm
+rm rom.hack 
+ln -s $1.hack rom.hack
+make clean
+make prog
+
