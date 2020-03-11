@@ -14,8 +14,8 @@
 `include "memory.v"
 
 module hack (
-    input CLK,          // 16MHz clock
-    input RST,          // reset button
+    input  CLK,         // 16MHz clock
+    input  RST,         // reset button
     output A,           // segment A
     output B,           // segment B
     output C,           // segment C
@@ -34,13 +34,12 @@ module hack (
     output COL2,        // keypad column 2
     output COL3,        // keypad column 3
     output COL4,        // keypad column 4
-    input ROW1,         // keypad row 1
-    input ROW2,         // keypad row 2
-    input ROW3,         // keypad row 3
-    input ROW4,         // keypad row 4
+    input  ROW1,        // keypad row 1
+    input  ROW2,        // keypad row 2
+    input  ROW3,        // keypad row 3
+    input  ROW4,        // keypad row 4
     output LED,         // LED
-    //inout GPIO,         // I/O data pin
-    input GPIO,         // I/O data pin
+    inout  GPIO,        // I/O data pin
     output USBPU        // USB pull-up resistor
 );
     // module interconnections
@@ -50,18 +49,33 @@ module hack (
     wire [15:0] outM;
     wire writeM;
     wire [15:0] inM;
+
+    // workaround for yosys inout port bug: 
+    //  - must explicitly instantiate the SB_IO device which converts the tristate 
+    //    signal (GPIO) into three normal signals
+    //  - must pass down these device signals all the way down to the ioport module
+    //    - enable (1=wr), out, in
+    wire gpioOutEn;
+    wire gpioOutSig;
+    wire gpioInSig;
+    SB_IO #(
+        .PIN_TYPE(6'b 1010_01),
+        .PULLUP(1'b1)
+    ) gpio (
+        .PACKAGE_PIN(GPIO),
+        .OUTPUT_ENABLE(gpioOutEn),
+        .D_OUT_0(gpioOutSig),
+        .D_IN_0(gpioInSig)
+    );
     
     ROM #(.ROM_DEPTH(8192)) rom8k(pc, instruction);
     CPU cpu(CLK, inM, instruction, RST, outM, writeM, addressM, pc);
     memory mem(CLK, addressM, outM, writeM, inM, 
         COL1, COL2, COL3, COL4, ROW1, ROW2, ROW3, ROW4,
         A, B, C, D, E, F, G, H, I, DP, CC1, CC2, CC3, CC4,
-        LED, GPIO
+        LED, gpioOutEn, gpioOutSig, gpioInSig
     );
 
-    // TEST: switch connected to GPIO
-    //assign GPIO = RST;
-        
     // drive USB pull-up resistor to '0' to disable USB
     assign USBPU = 0;
     

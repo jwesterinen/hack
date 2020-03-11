@@ -5,24 +5,24 @@
 `include "ioports.v"
 
 module memory (
-    input CLK,
-    input [14:0] address,
-    input [15:0] dataIn,
-    input load,
+    input  CLK,
+    input  [14:0] address,
+    input  [15:0] dataIn,
+    input  load,
     output [15:0] dataOut,
 
     // keypad connections
-    output COL1,    // keypad column 1
-    output COL2,    // keypad column 2
-    output COL3,    // keypad column 3
-    output COL4,    // keypad column 4
-    input ROW1,     // keypad row 1
-    input ROW2,     // keypad row 2
-    input ROW3,     // keypad row 3
-    input ROW4,     // keypad row 4
+    output COL1,        // keypad column 1
+    output COL2,        // keypad column 2
+    output COL3,        // keypad column 3
+    output COL4,        // keypad column 4
+    input  ROW1,        // keypad row 1
+    input  ROW2,        // keypad row 2
+    input  ROW3,        // keypad row 3
+    input  ROW4,        // keypad row 4
     
     // display connections
-    output A,
+    output A,           // segments A-I on the output device
     output B,
     output C,
     output D,
@@ -31,23 +31,24 @@ module memory (
     output G,
     output H,
     output I,
-    output DP,
-    output CC1,
+    output DP,          // decimal point segment on the output device
+    output CC1,         // common cathodes for the 4 displays
     output CC2,
     output CC3,
     output CC4,
     
     // I/O ports
-    output LED,
-    //inout GPIO
-    input GPIO
+    output LED,         // on-board LED
+    output gpioOutEn,   // set to 1 to write to the gpio pin  
+    output gpioOutSig,  // data written to gpio pin
+    input  gpioInSig    // data read from gpio pin
 );
-    wire ramLoad;
+    wire ramLoad;       // decoded load signals for the members of the memory map
     wire displayLoad;
     wire ledLoad;
     wire gpioLoad;
-    wire gpioDir;
-    wire [15:0] ramData;
+    wire gpioDir;       // rd/wr signal for the GPIO pin
+    wire [15:0] ramData;        // individual data buses for the members of the memory map
     wire [15:0] displayData;
     wire [15:0] keyboardData;
     wire [15:0] gpioData;
@@ -55,7 +56,7 @@ module memory (
     RAM #(.MEM_DEPTH(8192)) ram8k(CLK, address[12:0], dataIn, ramLoad, ramData);
     display screen(CLK, address[1:0], dataIn, displayLoad, A, B, C, D, E, F, G, H, I, DP, CC1, CC2, CC3, CC4, displayData);
     keyboard kbd(CLK, COL1, COL2, COL3, COL4, ROW1, ROW2, ROW3, ROW4, keyboardData);
-    ioports gpio(CLK, dataIn[0], ledLoad, gpioDir, gpioLoad, LED, GPIO, gpioData[0]);
+    ioports gpio(CLK, dataIn[0], ledLoad, gpioDir, gpioLoad, LED, gpioOutEn, gpioOutSig, gpioInSig, gpioData[0]);
 
     // write to RAM for address < 0x4000
     assign ramLoad = (address < 16'h4000) ? load : 0;

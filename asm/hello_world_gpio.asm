@@ -1,12 +1,12 @@
 // test program for GPIO - blink an external LED connected to the GPIO pin
 
-    @R1                 // set GPIO dirction to out (-1)
+    @R1                 // set GPIO dirction to out (1)
     D=A
     @SP
     M=M+1               
     A=M
     M=D
-    D=-1
+    D=1
     @SP
     M=M+1
     A=M
