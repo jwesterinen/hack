@@ -4,15 +4,14 @@
 //   - local variables
 //
 //   Stack frame after setup (use BP to access arguments):
-//        SP->  local varN      (BP+(N+1))
+//        SP->  local varN-1    (BP+N)
 //              ...
-//              local var1      (BP+2)
-//              return value    (BP+1)
+//              local var0      (BP+1)
 //        BP->  old BP
-//              parameterN      (BP-1)
+//              retaddr         (BP-1)
+//              parameter0      (BP-2)
 //              ...
-//              parameter1      (BP-N)
-//              retaddr         (BP-3)
+//              parameterN-1    (BP-(N+2))
 
 
 
@@ -33,10 +32,10 @@
     @SP
     M=M+1               //  - adjust SP to point to return value
     
-    @SP
-    M=M+1               //  - adjust SP to point to local variables by
-    ...                 //    incrementing SP N times
-    M=M+1               // 
+    @SP                 //  - adjust SP to point to local variables by
+    M=M+1               //    incrementing SP N times
+    ...
+    M=M+1
 
 (Function_Main)    
     @BP                 // access parameterM
@@ -49,7 +48,8 @@
     A=M+1
     A=A+1               // do this M times
     ...
-    ?=M
+    D=M                 // load varM
+    M=D                 // store varM
     
 (Function_return)    
     @BP                 // move BP to SP

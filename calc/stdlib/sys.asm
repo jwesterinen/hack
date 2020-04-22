@@ -18,11 +18,11 @@
     M=D
     @512                // init the expression stack pointer
     D=A
-    @BP
+    @EP
     M=D
     @768                // init the base pointer
     D=A
-    @EP
+    @BP
     M=D
 (ResetSys_return)
     @SP                 // pop the return address from the stack and return
@@ -40,17 +40,17 @@
 //   Return: none
 //
 //   Stack on entry:
-//     SP-> retaddr
-//          ms      (SP-1)
+//     SP-> ms
+//          retaddr (SP-1)
 
 (DelayMs)
     @SP                 // exit if ms count is 0
-    A=M-1
+    A=M
     D=M
     @DelayMs_return
     D;JEQ 
     @SP                 // decrement ms count
-    A=M-1
+    A=M
     M=M-1 
     @8000               // number of cycles for one ms           
     D=A
@@ -61,7 +61,8 @@
     0;JMP   
 (DelayMs_return)    
     @SP
-    M=M-1               // pop the return address from the stack and return
+    M=M-1               // pop the parameter
+    M=M-1               // pop the return address and return
     A=M+1
     A=M
     0;JMP

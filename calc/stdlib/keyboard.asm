@@ -8,27 +8,29 @@
 //   Return: keycode of the key pressed
 //
 //   Stack on entry:
+//          keycode     (SP+1) [return value]
 //     SP-> retaddr
-//
-//   The return value is written to the global variable "retval".
-//
 
 (ReadKey)
     @KBD                // get the RE_value from the kbd buffer when it becomes non-zero
     D=M
     @ReadKey
     D;JEQ       
-    @retval
+    @SP
+    A=M+1
     M=D    
 
 (RK_GetKeyRelease)    
-    @KBD                // wait for RE_value to become 0 then return the key value
+    @KBD                // wait for RE_value 0 then get another key
     D=M
     @RK_GetKeyRelease
     D;JNE
 
 (RK_Return)
-    @SP                 // pop the return address from the stack and return
+    @SP                 // return the keycode into D
+    A=M+1
+    D=M
+    @SP                 // pop the return address and return
     M=M-1
     A=M+1
     A=M

@@ -1,6 +1,8 @@
-for i
+cat stdlib/sysinit.asm > $1_temp.asm
+cat $1.asm >> $1_temp.asm
+for file in stdlib/*
 do
-    cat "$i".asm >> $1_temp.asm
+    cat "$file" >> $1_temp.asm
 done
 cd ../../nand2tetris/tools/
 ./Assembler.sh ~/devel/TinyFPGA/hack/$1_temp.asm

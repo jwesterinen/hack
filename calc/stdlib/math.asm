@@ -11,10 +11,10 @@
 //   Return: product
 //
 //   Stack on entry:
-//          product         (SP+1)
-//     SP-> retaddr
-//          multiplier      (SP-1)
-//          multiplicand    (SP-2)
+//          product      (SP+1) [return value]
+//     SP-> multiplier
+//          multiplicand (SP-1)
+//          retaddr      (SP-2)
 
 (Multiply)
     @SP                 // init product
@@ -24,28 +24,28 @@
     @Mult_negate_prod   // init negate product flag to false
     M=0    
     @SP                 // check for a negative multiplier
-    A=M-1
+    A=M
     D=M
     @Mult_L1
     D;JGE
     @Mult_negate_prod   // set the negate product flag to true
     M=!M
     @SP                 // negate the multiplier
-    A=M-1
+    A=M
     M=-M
     
 (Mult_L1)
     @SP                 // add the multiplicand to itself multiplier times
-    A=M-1
+    A=M
     D=M                 // multiplier in D
     @Mult_L2
     D;JLE 
     @SP
-    A=M-1
+    A=M
     M=M-1               // decrement multiplier, i.e. number of times to add multiplicand to itself
     A=A-1
     D=M
-    @SP                 // prod += multiplier
+    @SP
     A=M+1
     M=M+D
     @Mult_L1
@@ -61,13 +61,13 @@
     M=-M
     
 (Multiply_return)
-    @SP                 // store product into global retval
+    @SP                 // return the product in D
     A=M+1
     D=M
-    @retval
-    M=D
-    @SP                 // pop the return address and return
+    @SP
+    M=M-1               // pop 2 args from the stack
     M=M-1
+    M=M-1               // pop the return address from the stack and return
     A=M+1
     A=M
     0;JMP
@@ -82,10 +82,10 @@
 //   Return: quotient
 //
 //   Stack on entry:
-//          quotient    (SP+1)
-//     SP-> retaddr
+//          quotient    (SP+1) [return value]
+//     SP-> dividend
 //          divisor     (SP-1)
-//          dividend    (SP-2)
+//          retaddr     (SP-2)
 
 (Divide)
     @SP                 // init quotient
@@ -106,24 +106,23 @@
     0;JMP
 
 (Div_CheckNeg)
-    @Div_neg1           // check for neg divisor
+    @Div_neg1           // check for neg dividend
     M=0    
     @SP
-    A=M-1
+    A=M
     D=M
     @Divide_L2
     D;JGE
     @Div_neg1           // if so set flag to true and negate
     M=!M
     @SP
-    A=M-1
+    A=M
     M=-M
 (Divide_L2) 
-    @Div_neg2           // check for neg dividend   
+    @Div_neg2           // check for neg divisor   
     M=0
     @SP
     A=M-1
-    A=A-1
     D=M
     @Divide_L1
     D;JGE
@@ -131,22 +130,20 @@
     M=!M
     @SP
     A=M-1
-    A=A-1
     M=-M
    
 (Divide_L1)
     @SP                 // stop when divisor > dividend
-    A=M-1
-    A=A-1
+    A=M
     D=M                 // dividend in D
-    A=A+1               // divisor in M
+    A=A-1               // divisor in M
     D=D-M
     @Div_FixupSign
     D;JLT
     @SP                 // subtract divisor from current dividend until 0
     A=M-1
     D=M                 // divisor in D
-    A=A-1               // dividend in M
+    A=A+1               // dividend in M
     M=M-D               // reduce dividend by divisor
     @SP
     A=M+1
@@ -173,13 +170,13 @@
     M=-M    
 
 (Divide_return)    
-    @SP                 // store product into global retval
+    @SP                 // return the quotient in D
     A=M+1
     D=M
-    @retval
-    M=D
-    @SP                 // pop the return address and return
+    @SP
+    M=M-1               // pop the 2 parameters from the stack
     M=M-1
+    M=M-1               // pop the return address from the stack and return
     A=M+1
     A=M
     0;JMP
