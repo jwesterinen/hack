@@ -1,4 +1,4 @@
-cp $1.hack rom.hack
+cp $1 rom.hack
 make clean
 make prog
 
